@@ -110,8 +110,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Spot spot = (Spot) spotListAdapter.getItem(i);
         Intent showMapIntent = new Intent(this, SpotMapActivity.class);
-        showMapIntent.putExtra("latitude", spot.latitude);
-        showMapIntent.putExtra("longitude", spot.longitude);
+        showMapIntent.putExtra("spot_id", spot.spotName);
         startActivity(showMapIntent);
     }
 

@@ -44,8 +44,7 @@ public class GeodetectionService extends IntentService {
         NotificationManager notificationManager = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
 
         Intent intent = new Intent(this, SpotMapActivity.class);
-        intent.putExtra("latitude", spot.latitude);
-        intent.putExtra("longitude", spot.longitude);
+        intent.putExtra("spot_id", spot.spotName);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

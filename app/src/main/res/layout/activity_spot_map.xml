@@ -1,5 +1,20 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="vertical">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:id="@+id/map"
     tools:context="com.jamiepatel.theshoreditchof.SpotMapActivity"
+    android:layout_weight="1"
     android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/trendy_hangout_pager"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:layout_weight="2"
+    />
+
+</LinearLayout>
