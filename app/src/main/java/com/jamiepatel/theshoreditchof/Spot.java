@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by jamiepatel on 10/10/2015.
  */
-public class Spot {
+public class Spot implements TrendyArea{
 
     public final String cityName;
     public final String spotName;
@@ -46,5 +46,15 @@ public class Spot {
 
         SPOT_LOOKUP.put(spotName, this);
 
+    }
+
+    @Override
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    @Override
+    public Double getLongitude() {
+        return longitude;
     }
 }

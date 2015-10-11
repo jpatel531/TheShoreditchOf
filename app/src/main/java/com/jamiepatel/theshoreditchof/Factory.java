@@ -2,6 +2,9 @@ package com.jamiepatel.theshoreditchof;
 
 import android.content.Context;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

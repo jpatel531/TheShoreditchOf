@@ -2,16 +2,21 @@ package com.jamiepatel.theshoreditchof;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
@@ -27,13 +32,16 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class SpotMapActivity extends FragmentActivity {
+
+
+public class SpotMapActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private double latitude = 0;
     private double longitude = 0;
     Spot spot;
     Marker currentMarker;
+    GoogleApiClient mGoogleApiClient;
 
     TrendyHangoutPagerAdapter trendyHangoutPagerAdapter;
 
@@ -49,6 +57,15 @@ public class SpotMapActivity extends FragmentActivity {
         setUpMapIfNeeded();
 
         findTrendyHangouts();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        mGoogleApiClient.connect();
+
     }
 
     @Override
@@ -108,7 +125,8 @@ public class SpotMapActivity extends FragmentActivity {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 System.out.println(new String(responseBody));
                 Gson gson = new Gson();
-                final ArrayList<TrendyHangout> trendyHangouts = gson.fromJson(new String(responseBody), new TypeToken<List<TrendyHangout>>(){}.getType());
+                final ArrayList<TrendyHangout> trendyHangouts = gson.fromJson(new String(responseBody), new TypeToken<List<TrendyHangout>>() {
+                }.getType());
                 trendyHangoutPagerAdapter = new TrendyHangoutPagerAdapter(getSupportFragmentManager(), trendyHangouts);
                 final ViewPager trendyHangoutPager = (ViewPager) findViewById(R.id.trendy_hangout_pager);
                 trendyHangoutPager.setAdapter(trendyHangoutPagerAdapter);
@@ -124,6 +142,8 @@ public class SpotMapActivity extends FragmentActivity {
                         TrendyHangout hangout = trendyHangouts.get(i);
                         LatLng position = new LatLng(hangout.latitude, hangout.longitude);
                         currentMarker = mMap.addMarker(new MarkerOptions().position(position).title(hangout.name));
+                        mMap.clear();
+                        showDirectionsToHotSpot(hangout);
                     }
 
                     @Override
@@ -140,5 +160,27 @@ public class SpotMapActivity extends FragmentActivity {
         });
     }
 
+    private void showDirectionsToHotSpot(TrendyArea area){
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            String locLat = Double.toString(mLastLocation.getLatitude()) + "," + Double.toString(mLastLocation.getLongitude());
+            DirectionsAPI.showDirections(mMap, locLat, area, getApplicationContext());
+        }
+    }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        showDirectionsToHotSpot(spot);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 }
